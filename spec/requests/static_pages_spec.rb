@@ -51,7 +51,7 @@ describe "Static pages" do
 		end
 
 		it "should have title 'Kontakt'" do
-			visit '/static_pages/music'
+			visit '/static_pages/contact'
 			expect(page).to have_title("#{base_title} | Kontakt ")
 		end
 	end

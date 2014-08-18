@@ -5,6 +5,8 @@ ruby '1.9.3'
 gem 'rails', '4.0.8'
 gem 'pg', '0.15.1'
 
+gem 'haml-rails'
+
 group :development, :test do
   gem 'rspec-rails', '2.13.1'
 end

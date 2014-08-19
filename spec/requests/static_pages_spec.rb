@@ -2,62 +2,59 @@ require 'spec_helper'
 
 describe "Static pages" do
 
-	let(:base_title) { "Radio Afera" }
+	subject { page }
+
+	shared_examples_for "all static pages" do
+		it { should have_selector('h1', text: heading) }
+		it { should have_title(full_title(page_title)) }
+	end
 
 	describe "Home page" do
+		before { visit root_path }
 
-		it "should have content 'Afera App'" do
-			visit '/static_pages/home'
-			expect(page).to have_content('Afera App')
-		end
+		let(:heading) { 'Afera App' }
+		let(:page_title) { '' }
 
-		it "should have title base title" do
-			visit '/static_pages/home'
-			expect(page).to have_title("#{base_title}")
-		end
-
-		it "should not have a custom page title" do
-			visit '/static_pages/home'
-			expect(page).not_to have_title("#{base_title} | Home")
-		end
+		it_should_behave_like "all static pages"
+		it { should_not have_title('| Home')}
 	end
 
 	describe "Music page" do
+		before { visit music_path }
 
-		it "should have content 'Music'" do
-			visit '/static_pages/music'
-			expect(page).to have_content('Music')
-		end
+		let(:heading) { 'Muzyka' }
+		let(:page_title) { 'Muzyka' }	
 
-		it "should have title 'Muzyka'" do
-			visit '/static_pages/music'
-			expect(page).to have_title("#{base_title} | Muzyka")
-		end
+		it_should_behave_like "all static pages"
 	end
 
 	describe "About page" do
+		before { visit about_path }
 
-		it "should have content 'About Us'" do
-			visit '/static_pages/about'
-			expect(page).to have_content('About Us')
-		end
+		let(:heading) { 'O nas' }
+		let(:page_title) { 'O nas' }
 
-		it "should have title 'O nas'" do
-			visit '/static_pages/about'
-			expect(page).to have_title("#{base_title} | O nas")
-		end
+		it_should_behave_like "all static pages"
 	end
 
 	describe "Contact page" do
+		before { visit contact_path }
 
-		it "should have content 'Contact'" do
-			visit '/static_pages/contact'
-			expect(page).to have_content('Contact')
-		end
+		let(:heading) { 'Kontakt' }
+		let(:page_title) { 'Kontakt' }
 
-		it "should have title 'Kontakt'" do
-			visit '/static_pages/contact'
-			expect(page).to have_title("#{base_title} | Kontakt ")
-		end
+		it_should_behave_like "all static pages"
+	end
+
+	it "should have the right links on the layout" do
+		visit root_path
+		click_link "Strona główna"
+		expect(page).to have_title(full_title(''))
+		click_link "Muzyka"
+		expect(page).to have_title(full_title('Muzyka'))
+		click_link "O nas"
+		expect(page).to have_title(full_title('O nas'))
+		click_link "Kontakt"
+		expect(page).to have_title(full_title('Kontakt'))
 	end
 end

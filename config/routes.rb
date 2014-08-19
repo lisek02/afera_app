@@ -1,8 +1,8 @@
 AferaApp::Application.routes.draw do
-  get "static_pages/home"
-  get "static_pages/music"
-  get "static_pages/about"
-  get "static_pages/contact"
+  root 'static_pages#home'
+  match '/music',   to: 'static_pages#music',   via: 'get'
+  match '/about',   to: 'static_pages#about',   via: 'get'
+  match '/contact', to: 'static_pages#contact', via: 'get'
   
   #root :to => 'pages#home'
 

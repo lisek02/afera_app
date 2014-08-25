@@ -54,7 +54,7 @@ describe "Static pages" do
 		expect(page).to have_title(full_title('Muzyka'))
 		click_link "O nas"
 		expect(page).to have_title(full_title('O nas'))
-		click_link "Kontakt"
+		first(:link, "Kontakt").click
 		expect(page).to have_title(full_title('Kontakt'))
 	end
 end

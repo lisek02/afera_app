@@ -1,4 +1,6 @@
 AferaApp::Application.routes.draw do
+  get 'users/new'
+
   root 'static_pages#home'
   match '/music',   to: 'static_pages#music',   via: 'get'
   match '/about',   to: 'static_pages#about',   via: 'get'

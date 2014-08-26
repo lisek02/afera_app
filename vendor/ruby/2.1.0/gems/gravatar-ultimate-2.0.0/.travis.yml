@@ -1,0 +1,20 @@
+rvm:
+  - 1.9.3
+  - 2.0.0
+  - jruby
+  - ruby-head
+
+gemfile:
+  - Gemfile
+  - gemfiles/rails-3.1
+  - gemfiles/rails-3.2
+  - gemfiles/rails-4.0
+
+env:
+  - DEBUG=1
+
+matrix:
+  allow_failures:
+    - rvm: ruby-head
+    - rvm: jruby
+    - rvm: 1.9.3

@@ -1,10 +1,12 @@
-require 'rails_helper'
+require 'spec_helper'
 
-RSpec.describe "AuthenticationPages", :type => :request do
-  describe "GET /authentication_pages" do
-    it "works! (now write some real specs)" do
-      get authentication_pages_index_path
-      expect(response.status).to be(200)
-    end
-  end
+describe "Authentication" do
+	subject { page }
+
+	describe "signig page" do
+		before { visit signin_path }
+
+		it { should have_title('Sign in') }
+		it { should have_content('Sign in') }
+	end
 end

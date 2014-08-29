@@ -1,5 +1,5 @@
-= provide(:title, 'Sign up')
-%h1 Sign up
+= provide(:title, 'Edit user')
+%h1 Update your profile
 = form_for(@user) do |f|
   = render 'shared/error_messages'
   = f.label :login
@@ -10,5 +10,7 @@
   = f.password_field :password
   = f.label :password_confirmation, "Password Confirmation"
   = f.password_field :password_confirmation
+  = f.submit "Save changes"
 
-  = f.submit "Create my account"
+  = gravatar_for(@user)
+  = link_to "change", 'http://gravatar.com/email'

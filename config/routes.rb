@@ -1,6 +1,5 @@
 AferaApp::Application.routes.draw do
-  get 'groups/new'
-
+  resources :groups
   resources :users
   resources :sessions, only: [:new, :create, :destroy]
   root 'static_pages#home'

@@ -1,4 +1,5 @@
 class User < ActiveRecord::Base
+	has_and_belongs_to_many :groups, join_table: :group_users_table
 	before_save { email.downcase! }
 	before_create :create_remember_token
 

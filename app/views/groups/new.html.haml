@@ -1,2 +1,10 @@
-%h1 Groups#new
-%p Find me in app/views/groups/new.html.haml
+= provide(:title, "New group")
+%h1 New group
+= form_for(@group) do |f|
+  = render 'shared/error_messages', object: f.object
+  = f.label :name
+  = f.text_field :name
+  = f.label :description
+  = f.text_field :description
+
+  = f.submit "Create group"

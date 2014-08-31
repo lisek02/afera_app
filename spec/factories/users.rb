@@ -5,4 +5,9 @@ FactoryGirl.define do
 		password	"foobar"
 		password_confirmation	"foobar"
 	end
+
+	factory :group do
+		name				"presenters"
+		description	"Group of presenters"
+	end
 end

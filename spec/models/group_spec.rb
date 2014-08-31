@@ -1,5 +1,23 @@
-require 'rails_helper'
+require 'spec_helper'
 
-RSpec.describe Group, :type => :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+describe Group do
+
+	let(:user) { FactoryGirl.create(:user) }
+	before do
+		@group = Group.new(name: "presenters", description: "Group of presenters")
+	end
+
+	subject { @group }
+
+	it { should respond_to(:name) }
+	it { should respond_to(:description) }
+	it { should respond_to(:users) }
+
+	it { should be_valid }
+
+	describe "when name is not present" do
+		before { @group.name = ' ' }
+		it { should_not be_valid }
+	end
+
 end

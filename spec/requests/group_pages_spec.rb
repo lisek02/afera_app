@@ -27,6 +27,24 @@ describe "Group pages" do
 				expect(page).to have_selector('li', text: group.name)
 			end
 		end
+
+		describe "delete links" do
+
+			it { should_not have_link('delete') }
+
+			describe "as admin user" do
+				let(:admin) { FactoryGirl.create(:admin) }
+				before do
+					sign_in admin
+					visit groups_path
+				end
+
+				it { should have_link('delete', href: group_path(Group.first)) }
+				it "should be able to delete another group" do
+					expect { click_link('delete', match: :first) }.to change(Group, :count).by(-1)
+				end
+			end
+		end
 	end
 
 	describe "creating groups" do
@@ -35,11 +53,11 @@ describe "Group pages" do
 		describe "with invalid information" do
 
 			it "should not create a group" do
-				expect{ click_button "Create group" }.not_to change(Group, :count)
+				expect{ click_button "Save" }.not_to change(Group, :count)
 			end
 
 			describe "error messages" do
-				before { click_button "Create group" }
+				before { click_button "Save" }
 				it { should have_content('error') }
 			end
 		end
@@ -52,7 +70,7 @@ describe "Group pages" do
 			end
 
 			it "should create a group" do
-				expect{click_button "Create group" }.to change(Group, :count).by(1)
+				expect{click_button "Save" }.to change(Group, :count).by(1)
 			end
 		end
 	end

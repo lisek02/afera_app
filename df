@@ -1,0 +1,284 @@
+commit efd5650e25827fdf4a6801826ebeb9f920341428
+Author: Wojtek Lisiecki <wojciech.j.lisiecki@gmail.com>
+Date:   Sun Aug 31 13:25:52 2014 +0200
+
+    added admin attribute to user
+
+diff --git a/spec/models/user_spec.rb b/spec/models/user_spec.rb
+index d24a458..562fc87 100644
+--- a/spec/models/user_spec.rb
++++ b/spec/models/user_spec.rb
+@@ -14,8 +14,19 @@ describe User do
+ 	it { should respond_to(:authenticate) }
+ 	it { should respond_to(:remember_token) }
+ 	it { should respond_to(:groups) }
++	it { should respond_to(:admin) }
+ 
+ 	it { should be_valid }
++	it { should_not be_admin }
++
++	describe "with admin attribute set to true" do
++		before do
++			@user.save!
++			@user.toogle!(:admin)
++		end
++
++		it { should be_admin }
++	end
+ 
+ 	describe "when login is not present" do
+ 		before { @user.login = " " }
+
+commit 131097cceed9ba9c97010c3a0917a06080ec430d
+Author: Wojtek Lisiecki <wojciech.j.lisiecki@gmail.com>
+Date:   Sun Aug 31 13:07:54 2014 +0200
+
+    added create, show, index methods for groups
+
+diff --git a/spec/models/user_spec.rb b/spec/models/user_spec.rb
+index 1868663..d24a458 100644
+--- a/spec/models/user_spec.rb
++++ b/spec/models/user_spec.rb
+@@ -13,6 +13,7 @@ describe User do
+ 	it { should respond_to(:password_confirmation) }
+ 	it { should respond_to(:authenticate) }
+ 	it { should respond_to(:remember_token) }
++	it { should respond_to(:groups) }
+ 
+ 	it { should be_valid }
+ 
+
+commit 8d9c7df7394efe0987735e286ddff31b698a58ad
+Author: Wojtek Lisiecki <wojciech.j.lisiecki@gmail.com>
+Date:   Thu Aug 28 12:37:04 2014 +0200
+
+    signing in, authentication
+
+diff --git a/spec/models/user_spec.rb b/spec/models/user_spec.rb
+index 8ee39cb..1868663 100644
+--- a/spec/models/user_spec.rb
++++ b/spec/models/user_spec.rb
+@@ -12,6 +12,7 @@ describe User do
+ 	it { should respond_to(:password) }
+ 	it { should respond_to(:password_confirmation) }
+ 	it { should respond_to(:authenticate) }
++	it { should respond_to(:remember_token) }
+ 
+ 	it { should be_valid }
+ 
+@@ -94,4 +95,9 @@ describe User do
+ 			specify { expect(user_for_invalid_password).to be_falsey }
+ 		end
+ 	end
++
++	describe "remember token" do
++		before { @user.save }
++		it { expect(@user.remember_token).not_to be_blank }
++	end
+ end
+
+commit 3409d0439b6f3672aeaeee0ed1e66952b75ac03e
+Author: Wojtek Lisiecki <wojciech.j.lisiecki@gmail.com>
+Date:   Tue Aug 26 01:06:04 2014 +0200
+
+    more work on user model
+
+diff --git a/spec/models/user_spec.rb b/spec/models/user_spec.rb
+index e593c21..8ee39cb 100644
+--- a/spec/models/user_spec.rb
++++ b/spec/models/user_spec.rb
+@@ -23,7 +23,7 @@ describe User do
+ 	describe "when email format is invalid" do
+ 		it "should be invalid" do
+ 			adresses = %w[user@foo,com user_at_foo.org, example.user@foo
+-									foo@bar_baz.com foo@bar+baz.com]
++									foo@bar_baz.com foo@bar+baz.com example@foobar..com]
+ 			adresses.each do |invalid_adress|
+ 				@user.email = invalid_adress
+ 				expect(@user).not_to be_valid
+@@ -51,6 +51,16 @@ describe User do
+ 		it { should_not be_valid }
+ 	end
+ 
++	describe "user email with mixed case" do
++		let(:mixed_case_email) { "UseR@eXamPLe.coM" }
++
++		it "should be saved as lowercase" do
++			@user.email = mixed_case_email
++			@user.save
++			expect(@user.reload.email).to eq mixed_case_email.downcase
++		end
++	end
++
+ 	describe "when password is not present" do
+ 		before do
+ 			@user.password = ""
+
+commit 4187f9cc37265d18cbbf47b04bc1a008fbafdd97
+Author: Wojtek Lisiecki <wojciech.j.lisiecki@gmail.com>
+Date:   Tue Aug 26 00:47:09 2014 +0200
+
+    continued work on user model
+
+diff --git a/spec/models/user_spec.rb b/spec/models/user_spec.rb
+index 61888e8..e593c21 100644
+--- a/spec/models/user_spec.rb
++++ b/spec/models/user_spec.rb
+@@ -2,13 +2,16 @@ require 'spec_helper'
+ 
+ describe User do
+ 	
+-	before { @user = User.new(login: "example", email: "user@example.com") }
++	before { @user = User.new(login: "example", email: "user@example.com", password: "foobar", password_confirmation: "foobar") }
+ 
+ 	subject { @user }
+ 
+ 	it { should respond_to(:login) }
+ 	it { should respond_to(:email) }
+ 	it { should respond_to(:password_digest) }
++	it { should respond_to(:password) }
++	it { should respond_to(:password_confirmation) }
++	it { should respond_to(:authenticate) }
+ 
+ 	it { should be_valid }
+ 
+@@ -47,4 +50,38 @@ describe User do
+ 
+ 		it { should_not be_valid }
+ 	end
++
++	describe "when password is not present" do
++		before do
++			@user.password = ""
++			@user.password_confirmation = ""
++		end
++		it { should_not be_valid }
++	end
++
++	describe "when password confirmation doesn't match password" do
++		before { @user.password_confirmation = "mismatch" }
++		it { should_not be_valid }
++	end
++
++	describe "with a password that is too short" do
++		before { @user.password = @user.password_confirmation = "a"*5 }
++		it {should be_invalid }
++	end
++
++	describe "return value of authenticate method" do
++		before { @user.save }
++		let(:found_user) { User.find_by_email(@user.email) }
++
++		describe "with valid password" do
++			it { should eq found_user.authenticate(@user.password) }
++		end
++
++		describe "with invalid password" do
++			let(:user_for_invalid_password) { found_user.authenticate("invalid") }
++
++			it { should_not eq user_for_invalid_password }
++			specify { expect(user_for_invalid_password).to be_falsey }
++		end
++	end
+ end
+
+commit 70d791b67350323e72648f745f2fe385b71690b7
+Author: Wojtek Lisiecki <wojciech.j.lisiecki@gmail.com>
+Date:   Mon Aug 25 16:06:46 2014 +0200
+
+    added password digest to database
+
+diff --git a/spec/models/user_spec.rb b/spec/models/user_spec.rb
+index e21a858..61888e8 100644
+--- a/spec/models/user_spec.rb
++++ b/spec/models/user_spec.rb
+@@ -8,6 +8,7 @@ describe User do
+ 
+ 	it { should respond_to(:login) }
+ 	it { should respond_to(:email) }
++	it { should respond_to(:password_digest) }
+ 
+ 	it { should be_valid }
+ 
+
+commit d1bbd9a3867a61f78a6b249c00d32389b19b80ae
+Author: Wojtek Lisiecki <wojciech.j.lisiecki@gmail.com>
+Date:   Mon Aug 25 16:00:39 2014 +0200
+
+    added user tests
+
+diff --git a/spec/models/user_spec.rb b/spec/models/user_spec.rb
+index 0bc0e60..e21a858 100644
+--- a/spec/models/user_spec.rb
++++ b/spec/models/user_spec.rb
+@@ -1,5 +1,49 @@
+-require 'rails_helper'
++require 'spec_helper'
+ 
+-RSpec.describe User, :type => :model do
+-  pending "add some examples to (or delete) #{__FILE__}"
++describe User do
++	
++	before { @user = User.new(login: "example", email: "user@example.com") }
++
++	subject { @user }
++
++	it { should respond_to(:login) }
++	it { should respond_to(:email) }
++
++	it { should be_valid }
++
++	describe "when login is not present" do
++		before { @user.login = " " }
++		it { should_not be_valid }
++	end
++
++	describe "when email format is invalid" do
++		it "should be invalid" do
++			adresses = %w[user@foo,com user_at_foo.org, example.user@foo
++									foo@bar_baz.com foo@bar+baz.com]
++			adresses.each do |invalid_adress|
++				@user.email = invalid_adress
++				expect(@user).not_to be_valid
++			end
++		end
++	end
++
++	describe "when email format is valid" do
++		it "should be valid" do
++			adresses = %w[user@foo.COM A_US_ER@f.b.org first.lst@foo.jp a+b@baz.com]
++			adresses.each do |valid_adress|
++				@user.email = valid_adress
++				expect(@user).to be_valid
++			end
++		end
++	end
++
++	describe "when email address id already taken" do
++		before do
++			user_with_same_email = @user.dup
++			user_with_same_email.email = @user.email.upcase
++			user_with_same_email.save
++		end
++
++		it { should_not be_valid }
++	end
+ end
+
+commit 4a3116d06ccd9e277a6161950180daea136fc348
+Author: Wojtek Lisiecki <wojciech.j.lisiecki@gmail.com>
+Date:   Mon Aug 25 12:48:39 2014 +0200
+
+    generated user model and controller
+
+diff --git a/spec/models/user_spec.rb b/spec/models/user_spec.rb
+new file mode 100644
+index 0000000..0bc0e60
+--- /dev/null
++++ b/spec/models/user_spec.rb
+@@ -0,0 +1,5 @@
++require 'rails_helper'
++
++RSpec.describe User, :type => :model do
++  pending "add some examples to (or delete) #{__FILE__}"
++end

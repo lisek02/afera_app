@@ -90,5 +90,17 @@ describe "Authentication", type: :request do
         specify { expect(response).to redirect_to(root_path) }
       end
     end
+
+    describe "for non-admin user" do
+      let(:group) { FactoryGirl.create(:group) }
+      let(:non_admin) { FactoryGirl.create(:user) }
+
+      before { sign_in non_admin, no_capybara: true }
+
+      describe "submitting a DELETE request to the Groups#destroy action" do
+        before { delete group_path(group) }
+        specify { expect(response).to redirect_to(root_path) }
+      end
+    end
   end
 end

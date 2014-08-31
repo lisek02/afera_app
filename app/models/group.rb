@@ -1,4 +1,4 @@
 class Group < ActiveRecord::Base
-	has_and_belongs_to_many :users, join_table: :group_users_table
+	has_and_belongs_to_many :users
 	validates :name, presence: true
 end

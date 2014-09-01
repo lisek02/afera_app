@@ -1,6 +1,6 @@
 FactoryGirl.define do
 	factory :group do
-		name				{ Faker::Commerce.department(2) }
+		name				{ "Prezenterzy" }
 		description	{ Faker::Lorem.sentence }
 	end
 end

@@ -101,6 +101,11 @@ describe "Authentication", type: :request do
         before { delete group_path(group) }
         specify { expect(response).to redirect_to(root_path) }
       end
+
+      describe "visiting the user index page" do
+        before { visit users_path }
+        specify { expect(current_path).to eq root_path }
+      end
     end
   end
 end

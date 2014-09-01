@@ -1,17 +1,11 @@
 FactoryGirl.define do
 	factory :user do
-		login			"example"
-		email			"user@example.com"
-		password	"foobar"
-		password_confirmation	"foobar"
+		login	{ Faker::Internet.user_name }
+		email			{ Faker::Internet.email }
+		password	{ Faker::Internet.password }
 
 		factory :admin do
 			admin		true
 		end
-	end
-
-	factory :group do
-		name				"presenters"
-		description	"Group of presenters"
 	end
 end

@@ -1,5 +1,5 @@
 class GroupsController < ApplicationController
-  before_action :admin_user, only: :destroy
+  before_action :admin_user, only: [:edit, :destroy]
 
   def index
   	@groups = Group.all
@@ -7,6 +7,20 @@ class GroupsController < ApplicationController
 
   def show
   	@group = Group.find(params[:id])
+  end
+
+  def edit
+    @group = Group.find(params[:id])
+  end
+
+  def update
+    @group = Group.find(params[:id])
+    if @group.update_attributes(group_params)
+      flash[:success] = "Group updated"
+      redirect_to @group
+    else
+      render 'edit'
+    end
   end
 
   def new

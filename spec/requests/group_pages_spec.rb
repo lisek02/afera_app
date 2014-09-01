@@ -28,9 +28,10 @@ describe "Group pages" do
 			end
 		end
 
-		describe "delete links" do
+		describe "delete and edit links" do
 
 			it { should_not have_link('delete') }
+			it { should_not have_link('edit') }
 
 			describe "as admin user" do
 				let(:admin) { FactoryGirl.create(:admin) }
@@ -42,6 +43,12 @@ describe "Group pages" do
 				it { should have_link('delete', href: group_path(Group.first)) }
 				it "should be able to delete another group" do
 					expect { click_link('delete', match: :first) }.to change(Group, :count).by(-1)
+				end
+
+				it { should have_link('edit', href: edit_group_path(Group.first)) }
+				it "should be able to edit group" do
+					click_link('edit', match: :first)
+					expect(page).to have_content('Edit group')
 				end
 			end
 		end

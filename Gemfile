@@ -24,6 +24,7 @@ gem 'turbolinks'
 gem 'jbuilder', '1.0.2'
 gem 'bcrypt'
 gem 'gravatar-ultimate'
+gem 'faker'
 
 group :doc do
   gem 'sdoc', '0.3.20', require: false

@@ -1,3 +1,8 @@
 = provide(:title, @user.login)
 = gravatar_for(@user)
 = "#{@user.login}, #{@user.email}"
+- if @user.groups.any?
+  %ul= "belongs to groups:"
+  - group_list(@user).each do |key, value|
+    %li= link_to(value, group_path(key))
+    

@@ -5,10 +5,15 @@ describe "Group pages" do
 
 	describe "Group page" do
 		let(:group) { FactoryGirl.create(:group) }
-		before { visit group_path(group) }
+		let(:user) { FactoryGirl.create(:user) }
+		before do
+			group.users << user
+			visit group_path(group)
+		end
 
 		it { should have_title(full_title(group.name)) }
 		it { should have_content(group.description) }
+		it { should have_content(group.users.first.login)}
 	end
 
 	describe "index" do

@@ -1,3 +1,7 @@
 = provide(:title, @group.name)
 %h1= @group.name.capitalize
 %p= @group.description
+- if @group.users.any?
+  %ul= "members:"
+  - user_list(@group).each do |key, value|
+    %li= link_to(value, user_path(key))

@@ -1,5 +1,5 @@
 = provide(:title, 'Edit user')
-%h1 Update your profile
+%h1 Update profile
 = form_for(@user) do |f|
   = render 'shared/error_messages', object: f.object
   = f.label :login

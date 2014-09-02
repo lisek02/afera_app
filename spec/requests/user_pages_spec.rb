@@ -66,7 +66,7 @@ describe "User pages" do
 		end
 
 		describe "page" do
-			it { should have_content("Update your profile") }
+			it { should have_content("Update profile") }
 			it { should have_title("Edit user") }
 			it { should have_link('change', href: 'http://gravatar.com/email') }
 		end
@@ -93,6 +93,38 @@ describe "User pages" do
       it { should have_link('Sign out', href: signout_path) }
 			specify { expect(user.reload.login).to eq new_login }
 			specify { expect(user.reload.email).to eq new_email }
+		end
+	end
+
+	describe "visiting index as admin user" do
+		before do
+			sign_in FactoryGirl.create(:admin)
+			FactoryGirl.create(:user, login: "bob", email: "bob@example.com" )
+			FactoryGirl.create(:user, login: "ben", email: "ben@example.com")
+			visit users_path
+		end
+
+		it { should have_title('All users') }
+		it { should have_content('All users') }
+
+		it "should list each user" do
+			User.all.each do |user|
+				expect(page).to have_selector('li', text: user.login)
+			end
+		end
+
+		describe "should have edit and delete links" do
+
+			it { should have_link('delete', user_path(User.first)) }
+			it "should be able to delete another user" do
+				expect { click_link('delete', match: :first).to change(User, :count).by(-1) }
+			end
+
+			it { should have_link('edit', edit_user_path(User.first)) }
+			it "should be able to edit user" do
+				click_link('edit', match: :first)
+				expect(page).to have_content('Update profile')
+			end
 		end
 	end
 end

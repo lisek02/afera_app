@@ -4,6 +4,6 @@
   - @groups.each do |group|
     %li= link_to(group.name, group_path(group.id))
     = group.description
-    - if current_user && current_user.admin? && !current_user?(@user)
+    - if current_user && current_user.admin?
       = link_to("delete", group_path(group), method: :delete, data: { confirm: 'Are you sure?' } )
       = link_to("edit", edit_group_path(group))

@@ -4,3 +4,6 @@
 	- @users.each do |user|
 		%li= link_to(user.login, user_path(user))
 		= user.email
+		- if current_user && current_user.admin? && !current_user?(@user)
+			= link_to('edit', edit_user_path(user))
+			= link_to('delete', user_path(user), method: :delete, data: { confirm: "Are you sure?" })

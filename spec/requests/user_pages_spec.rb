@@ -14,14 +14,23 @@ describe "User pages" do
 
 		it { should have_title(full_title(user.login)) }
 		it { should have_content(user.login) }
-		it { should have_content(user.groups.first.name)}
+		it { should have_content(user.groups.first.name) }
 
-		describe "should have add to group button" do
-			it { should have_button('Add', somepath(group)) }
-		end
+		describe "as an admin user" do
+			let(:admin) { FactoryGirl.create(:admin) }
+			before do
+				sign_in admin
+				visit user_path(user)
+			end
 
-		describe "should have remove from group button" do
-			it { should have_button('Remove', somepath(anothergroup)) }
+			describe "should have remove from group button" do
+				it { should have_link('remove', user_group_remove_path(user.id, group.id)) }
+			end
+
+			describe "after removing from group" do
+				before { click_link('remove', user_group_remove_path(user.id, group.id)) }
+				it { should have_link('add', user_group_add_path(user.id, group.id)) }
+			end
 		end
 	end
 

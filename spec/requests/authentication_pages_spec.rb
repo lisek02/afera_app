@@ -99,6 +99,7 @@ describe "Authentication", type: :request do
     describe "for non-admin user" do
       let(:group) { FactoryGirl.create(:group) }
       let(:non_admin) { FactoryGirl.create(:user) }
+      let(:user) { FactoryGirl.create(:user) }
 
       before { sign_in non_admin, no_capybara: true }
 
@@ -108,8 +109,18 @@ describe "Authentication", type: :request do
       end
 
       describe "visiting the user index page" do
-        before { visit users_path }
-        specify { expect(current_path).to eq root_path }
+        before { get users_path }
+        specify { expect(response).to redirect_to(root_path) }
+      end
+
+      describe "submitting a POST request to add user to a group" do
+        before { post user_group_add_path(group.id, user.id) }
+        specify { expect(response).to redirect_to(root_path) }
+      end
+
+      describe "submitting a POST request to remove user from a group" do
+        before { post user_group_remove_path(group.id, user.id) }
+        specify { expect(response).to redirect_to(root_path) }
       end
     end
   end

@@ -1,9 +1,9 @@
 AferaApp::Application.routes.draw do
   resources :groups
   resources :users do
-    member do
-      post :add_group
-      post :remove_group
+    resources :groups, only: [:add, :remove] do
+      post :add
+      post :remove
     end
   end
   resources :sessions, only: [:new, :create, :destroy]

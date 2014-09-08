@@ -1,5 +1,5 @@
 class GroupsController < ApplicationController
-  before_action :admin_user, only: [:edit, :destroy]
+  before_action :admin_user, only: [:edit, :destroy, :add, :remove]
 
   def index
   	@groups = Group.all
@@ -41,6 +41,22 @@ class GroupsController < ApplicationController
     Group.find(params[:id]).destroy
     flash[:success] = "Group destroyed"
     redirect_to groups_path
+  end
+
+  #add group to user
+  def add
+    user = User.find(params[:user_id])
+    group = Group.find(params[:group_id])
+    user.groups << group
+    redirect_to user
+  end
+
+  #remove group from user
+  def remove
+    user = User.find(params[:user_id])
+    group = Group.find(params[:group_id])
+    user.groups.delete(group)
+    redirect_to user
   end
 
   private

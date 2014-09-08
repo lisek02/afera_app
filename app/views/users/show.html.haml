@@ -5,4 +5,11 @@
   %ul= "belongs to groups:"
   - group_list(@user).each do |key, value|
     %li= link_to(value, group_path(key))
-    
+- if current_user && current_user.admin?
+  %ul= "Add to group"
+  - @groups.each do |gr|
+    %li= gr.name
+    - if @user.groups.ids.include?(gr.id)
+      = link_to("remove", remove_group_user_path(group_id: gr.id), method: :post)
+    - else
+      = link_to("add", add_group_user_path(group_id: gr.id), method: :post)

@@ -12,6 +12,7 @@ class UsersController < ApplicationController
   end
 
   def show
+    @groups = Group.all
   	@user = User.find(params[:id])
   end
 
@@ -33,6 +34,20 @@ class UsersController < ApplicationController
     else
       render 'edit'
     end
+  end
+
+  def add_group
+    user = User.find(params[:id])
+    group = Group.find(params[:group_id])
+    user.groups << group
+    redirect_to user
+  end
+
+  def remove_group
+    user = User.find(params[:id])
+    group = Group.find(params[:group_id])
+    user.groups.delete(group)
+    redirect_to user
   end
 
   private

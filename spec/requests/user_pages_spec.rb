@@ -6,6 +6,7 @@ describe "User pages" do
 	describe "User page" do
 		let(:user) { FactoryGirl.create(:user) }
 		let(:group) { FactoryGirl.create(:group) }
+		let(:anothergroup) { FactoryGirl.create(:group) }
 		before do
 			user.groups << group
 			visit user_path(user)
@@ -14,6 +15,14 @@ describe "User pages" do
 		it { should have_title(full_title(user.login)) }
 		it { should have_content(user.login) }
 		it { should have_content(user.groups.first.name)}
+
+		describe "should have add to group button" do
+			it { should have_button('Add', somepath(group)) }
+		end
+
+		describe "should have remove from group button" do
+			it { should have_button('Remove', somepath(anothergroup)) }
+		end
 	end
 
 	describe "Sign up page" do

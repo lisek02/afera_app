@@ -1,6 +1,11 @@
 AferaApp::Application.routes.draw do
   resources :groups
-  resources :users
+  resources :users do
+    member do
+      post :add_group
+      post :remove_group
+    end
+  end
   resources :sessions, only: [:new, :create, :destroy]
   root 'static_pages#home'
   match '/signup',  to: 'users#new',            via: 'get'
